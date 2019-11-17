@@ -1,9 +1,8 @@
 <?php
 namespace um;
 
-
+// Exit if executed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
-
 
 /**
  * Ultimate Member Dependency Checker
@@ -33,48 +32,35 @@ if ( ! class_exists( 'um\Dependencies' ) ) {
 		 * @var array
 		 */
 		public $ext_required_version = array(
-			'bbpress'               => '2.0.7',
-			'followers'             => '2.1.6',
-			'forumwp'               => '2.0.4',
-			'friends'               => '2.1.4',
-			'groups'                => '2.1.7',
-			'instagram'             => '2.0.5',
-			'mailchimp'             => '2.2.0',
-			'messaging'             => '2.2.5',
-			'mycred'                => '2.1.6',
-			'notices'               => '2.0.5',
-			'notifications'         => '2.1.3',
-			'online'                => '2.1.1',
-			'private-content'       => '2.0.5',
-			'profile-completeness'  => '2.1.2',
-			'recaptcha'             => '2.1.2',
-			'reviews'               => '2.1.5',
-			'social-activity'       => '2.2.0',
-			'social-login'          => '2.2.0',
-			'terms-conditions'      => '2.1.1',
-			'unsplash'              => '2.0.2',
-			'user-bookmarks'        => '2.0.2',
-			'user-photos'           => '2.0.4',
-			'user-tags'             => '2.1.0',
-			'verified-users'        => '2.0.5',
-			'woocommerce'           => '2.1.9',
-
-			/*????*/
-			'restrict-content'      => '2.0',
-
-			/*rc*/
-			'user-notes'            => '2.0',
-			'profile-tabs'          => '1.6',
-
-			/*beta*/
+			'bbpress'               => '2.0.1',
+			'followers'             => '2.0.1',
+			'friends'               => '2.0.1',
+			'groups'                => '2.0',
+			'instagram'             => '2.0',
+			'invitations'           => '2.0',
 			'frontend-posting'      => '1.0',
-			/*alpha*/
-			'user-exporter'         => '1.0.0',
-
-			/*in development*/
-			'user-location'         => '1.0',
-			'filesharing'           => '1.0.0',
+			'mailchimp'             => '2.0.1',
+			'messaging'             => '2.0.5',
+			'mycred'                => '2.0',
+			'notices'               => '2.0.1',
+			'notifications'         => '2.0.1',
+			'online'                => '2.0',
+			'private-content'       => '2.0',
+			'profile-completeness'  => '2.0.1',
+			'recaptcha'             => '2.0.2',
+			'reviews'               => '2.0.3',
+			'social-activity'       => '2.0.6',
+			'social-login'          => '2.0.1',
+			'terms-conditions'      => '2.0',
+			'user-location'         => '2.0',
+			'user-tags'             => '2.0',
+			'verified-users'        => '2.0.1',
+			'woocommerce'           => '2.0.1',
+			'restrict-content'      => '2.0',
 			'beaver-builder'        => '2.0',
+			'user-photos'           => '2.0.1',
+			'user-exporter'         => '1.0.0',
+			'bookmark'              => '2.0',
 			'user-events'           => '1.0.0',
 		);
 
@@ -125,20 +111,6 @@ if ( ! class_exists( 'um\Dependencies' ) ) {
 			if ( ! self::$active_plugins ) self::init();
 
 			return in_array( 'bbpress/bbpress.php', self::$active_plugins ) || array_key_exists( 'bbpress/bbpress.php', self::$active_plugins );
-
-		}
-
-
-		/**
-		 * Check if ForumWP plugin is active
-		 *
-		 * @return bool
-		 */
-		public static function forumwp_active_check() {
-
-			if ( ! self::$active_plugins ) self::init();
-
-			return in_array( 'forumwp/forumwp.php', self::$active_plugins ) || array_key_exists( 'forumwp/forumwp.php', self::$active_plugins );
 
 		}
 

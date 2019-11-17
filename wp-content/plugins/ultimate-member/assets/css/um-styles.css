@@ -60,9 +60,9 @@
 }
 .um.um-in-admin .um-tip {display: none !important}
 
-.um:not(.um-directory) input,
-.um:not(.um-directory) select,
-.um:not(.um-directory) textarea{
+.um input,
+.um select,
+.um textarea{
 	font-size: 15px;
 }
 
@@ -175,11 +175,6 @@ p.um-notice {
 	position: relative;
 }
 
-p.um-notice a {
-	color: #fff;
-	text-decoration: underline;
-}
-
 p.um-notice i {
     position: absolute;
     right: 14px;
@@ -204,11 +199,6 @@ p.um-notice.warning {
 	color: #666;
 	border: 1px solid #efe4a2;
 	padding: 8px 15px !important;
-}
-
-p.um-notice.warning a {
-	color: #666;
-	text-decoration: underline;
 }
 
 /*
@@ -237,7 +227,7 @@ p.um-notice.warning a {
 	top: -17px;
 	left: 10px;
 	position: absolute;
-	z-index: 1;
+	z-index: 900;
 	color: #C74A4A;
 	font-size: 28px;
 	line-height: 1em !important;
@@ -474,8 +464,8 @@ p.um-notice.warning a {
 	position: relative;
 }
 
-.um-field-checkbox:not(.um-field),
-.um-field-radio:not(.um-field) {
+.um-field-checkbox,
+.um-field-radio {
 	display: block;
 	margin: 8px 0;
 	position: relative;
@@ -715,13 +705,7 @@ a.um-link-alt:hover {text-decoration: underline !important;}
 	margin: 0 !important;
 }
 
-.um-dropdown ul {
-	background: #fff;
-	position: relative;
-	z-index: 16;
-}
-
-.um-dropdown li a {
+.um-dropdown li  a {
 	display: block;
 	padding: 8px 12px;
 	color: #666;
@@ -734,7 +718,7 @@ a.um-link-alt:hover {text-decoration: underline !important;}
 	padding: 12px;
 }
 
-.um-dropdown li a:hover {
+.um-dropdown li  a:hover {
 
 }
 
@@ -744,6 +728,7 @@ a.um-link-alt:hover {text-decoration: underline !important;}
 
 .um-dropdown-arr {
 	position: absolute;
+	color: #fff;
 	font-size: 24px;
 	width: 24px;
 	height: 24px;
@@ -860,7 +845,7 @@ small.um-max-filesize span{
     user-select: none;
     background: none !important;
     background-color: #fff !important;
-    border: 1px solid #ddd !important;
+    border: 2px solid #ddd !important;
 }
 .select2.select2-container .select2-selection .select2-selection__arrow b[role=presentation]{
 	display:none;
@@ -891,7 +876,7 @@ small.um-max-filesize span{
     border-left: 0 !important;
 }
 .select2-container.select2-container--open .select2-dropdown{
-	 border: 1px solid #ddd !important;
+	 border: 2px solid #ddd !important;
 }
 .select2-results li{
 	list-style: none;

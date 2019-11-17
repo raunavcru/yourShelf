@@ -1,6 +1,3 @@
-<?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
-
-
 <div class="um-admin-metabox">
 
 	<?php foreach ( UM()->roles()->get_roles( __( 'Default', 'ultimate-member' ) ) as $key => $value ) {

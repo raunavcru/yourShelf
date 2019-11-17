@@ -609,7 +609,7 @@
   $.fn.um_raty.defaults = {
     cancel       : false,
     cancelClass  : 'raty-cancel',
-    cancelHint   : wp.i18n.__( 'Cancel this rating!', 'ultimate-member' ),
+    cancelHint   : 'Cancel this rating!',
     cancelOff    : 'cancel-off.png',
     cancelOn     : 'cancel-on.png',
     cancelPlace  : 'left',
@@ -620,7 +620,7 @@
     iconRange    : undefined,
     mouseout     : undefined,
     mouseover    : undefined,
-    noRatedMsg   : wp.i18n.__( 'Not rated yet!', 'ultimate-member' ),
+    noRatedMsg   : 'Not rated yet!',
     number       : 5,
     numberMax    : 20,
     path         : undefined,

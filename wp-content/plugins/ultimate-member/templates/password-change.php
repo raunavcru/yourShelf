@@ -1,6 +1,4 @@
-<?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
-
-<div class="um <?php echo esc_attr( $this->get_class( $mode ) ); ?> um-<?php echo esc_attr( $form_id ); ?>">
+<div class="um <?php echo $this->get_class( $mode ); ?> um-<?php echo esc_attr( $form_id ); ?>">
 
 	<div class="um-form">
 	
@@ -91,7 +89,7 @@
 			 * }
 			 * ?>
 			 */
-			do_action( 'um_after_form_fields', $args ); ?>
+			do_action( "um_after_form_fields", $args ); ?>
 		</form>
 	</div>
 </div>

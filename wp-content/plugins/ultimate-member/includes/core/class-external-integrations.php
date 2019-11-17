@@ -28,13 +28,9 @@ if ( ! class_exists( 'um\core\External_Integrations' ) ) {
 
 
 			add_action( 'um_access_fix_external_post_content', array( &$this, 'bbpress_no_access_message_fix' ), 10 );
-			add_action( 'um_access_fix_external_post_content', array( &$this, 'forumwp_fix' ), 11 );
 
 			add_filter( 'um_localize_permalink_filter', array( &$this, 'um_localize_permalink_filter' ), 10, 2 );
 			add_filter( 'icl_ls_languages', array( &$this, 'um_core_page_wpml_permalink' ), 10, 1 );
-
-			// Integration for the "Transposh Translation Filter" plugin
-			add_action( 'template_redirect', array( &$this, 'transposh_user_profile' ), 9990 );
 
 			/**
 			 * @todo Customize this form metadata
@@ -77,48 +73,6 @@ if ( ! class_exists( 'um\core\External_Integrations' ) ) {
 
 
 		/**
-		 * Integration for the "Transposh Translation Filter" plugin
-		 *
-		 * @description Fix issue "404 Not Found" on profile page
-		 * @hook template_redirect
-		 * @see http://transposh.org/
-		 *
-		 * @global transposh_plugin $my_transposh_plugin
-		 * @global \WP_Query $wp_query Global WP_Query instance.
-		 */
-		public function transposh_user_profile() {
-			global $my_transposh_plugin, $wp_query;
-
-			if ( empty( $my_transposh_plugin ) ) {
-				return;
-			}
-
-			if ( ! $wp_query->is_404() ) {
-				return;
-			}
-
-			$profile_id = UM()->options()->get( 'core_user' );
-			$post = get_post( $profile_id );
-
-			if ( empty( $post ) || is_wp_error( $post ) ) {
-				return;
-			}
-
-			if ( ! empty( $_SERVER['REQUEST_URI'] ) && stripos( $_SERVER['REQUEST_URI'], "$my_transposh_plugin->target_language/$post->post_name" ) !== false ) {
-				preg_match( "#/$post->post_name/([^\/\?$]+)#", $_SERVER['REQUEST_URI'], $matches );
-
-				if ( isset( $matches[1] ) ) {
-					query_posts( array(
-						'page_id' => $post->ID
-					) );
-					set_query_var( 'um_user', $matches[1] );
-					wp_reset_postdata();
-				}
-			}
-		}
-
-
-		/**
 		 * Gravity forms role capabilities compatibility
 		 */
 		public function plugins_loaded() {
@@ -142,16 +96,6 @@ if ( ! class_exists( 'um\core\External_Integrations' ) ) {
 
 
 		/**
-		 * Fixed ForumWP access to Forums message
-		 */
-		function forumwp_fix() {
-			if ( function_exists( 'FMWP' ) ) {
-				remove_filter( 'single_template', array( FMWP()->shortcodes(), 'cpt_template' ) );
-			}
-		}
-
-
-		/**
 		 * @param $profile_url
 		 * @param $page_id
 		 *
@@ -162,11 +106,11 @@ if ( ! class_exists( 'um\core\External_Integrations' ) ) {
 			if ( ! $this->is_wpml_active() )
 				return $profile_url;
 
-			/*if ( function_exists( 'icl_get_current_language' ) && icl_get_current_language() != icl_get_default_language() ) {
+			if ( function_exists( 'icl_get_current_language' ) && icl_get_current_language() != icl_get_default_language() ) {
 				if ( get_the_ID() > 0 && get_post_meta( get_the_ID(), '_um_wpml_user', true ) == 1 ) {
 					$profile_url = get_permalink( get_the_ID() );
 				}
-			}*/
+			}
 
 			// WPML compatibility
 			if ( function_exists( 'icl_object_id' ) ) {
@@ -297,8 +241,11 @@ if ( ! class_exists( 'um\core\External_Integrations' ) ) {
 			if ( function_exists( 'icl_get_current_language' ) && icl_get_current_language() != icl_get_default_language() ) {
 				$url = $this->get_url_for_language( UM()->config()->permalinks[ $slug ], icl_get_current_language() );
 
-				if ( $updated ) {
-					$url = add_query_arg( 'updated', esc_attr( $updated ), $url );
+				if ( get_post_meta( get_the_ID(), '_um_wpml_account', true ) == 1 ) {
+					$url = get_permalink( get_the_ID() );
+				}
+				if ( get_post_meta( get_the_ID(), '_um_wpml_user', true ) == 1 ) {
+					$url = $this->get_url_for_language( UM()->config()->permalinks[ $slug ], icl_get_current_language() );
 				}
 			}
 
@@ -366,12 +313,6 @@ if ( ! class_exists( 'um\core\External_Integrations' ) ) {
 		}
 
 
-		/**
-		 * @param $template
-		 * @param $template_name
-		 *
-		 * @return string
-		 */
 		function locate_email_template( $template, $template_name ) {
 			if ( ! $this->is_wpml_active() ) {
 				return $template;
@@ -381,7 +322,8 @@ if ( ! class_exists( 'um\core\External_Integrations' ) ) {
 			$language_codes = $this->get_languages_codes();
 
 			$lang = '';
-			if ( $language_codes['default'] != $language_codes['current'] ) {
+			if ( $language_codes['default'] != $language_codes['current'] /*&&
+			     UM()->config()->email_notifications[ $template_name ]['recipient'] != 'admin'*/ ) {
 				$lang = $language_codes['current'] . '/';
 			}
 
@@ -394,18 +336,13 @@ if ( ! class_exists( 'um\core\External_Integrations' ) ) {
 			//if there isn't template at theme folder get template file from plugin dir
 			if ( ! $template ) {
 				$path = ! empty( UM()->mail()->path_by_slug[ $template_name ] ) ? UM()->mail()->path_by_slug[ $template_name ] : um_path . 'templates/email';
-				$template = trailingslashit( $path ) . $template_name . '.php';
+				$template = trailingslashit( $path ) . $lang . $template_name . '.php';
 			}
 
 			return $template;
 		}
 
 
-		/**
-		 * @param $template
-		 *
-		 * @return string
-		 */
 		function change_email_template_file( $template ) {
 			if ( ! $this->is_wpml_active() ) {
 				return $template;
@@ -422,11 +359,7 @@ if ( ! class_exists( 'um\core\External_Integrations' ) ) {
 		}
 
 
-		/**
-		 * @param $columns
-		 *
-		 * @return array
-		 */
+
 		function add_email_templates_wpml_column( $columns ) {
 			if ( ! $this->is_wpml_active() ) {
 				return $columns;
@@ -457,11 +390,6 @@ if ( ! class_exists( 'um\core\External_Integrations' ) ) {
 		}
 
 
-		/**
-		 * @param $item
-		 *
-		 * @return string
-		 */
 		function wpml_column_content( $item ) {
 			if ( ! $this->is_wpml_active() ) {
 				return '';
@@ -480,12 +408,6 @@ if ( ! class_exists( 'um\core\External_Integrations' ) ) {
 		}
 
 
-		/**
-		 * @param $template
-		 * @param $code
-		 *
-		 * @return string
-		 */
 		function get_status_html( $template, $code ) {
 			global $sitepress;
 			$status = 'add';
@@ -508,21 +430,14 @@ if ( ! class_exists( 'um\core\External_Integrations' ) ) {
 				)
 			);
 
-			$language_codes = $this->get_languages_codes( $code );
+			$language_codes = $this->get_languages_codes($code);
 
 			$lang = '';
 			if ( $language_codes['default'] != $language_codes['current'] ) {
 				$lang = $language_codes['current'] . '/';
 			}
 
-			//theme location
 			$template_path = trailingslashit( get_stylesheet_directory() . '/ultimate-member/email' ) . $lang . $template . '.php';
-
-			//plugin location for default language
-			if ( empty( $lang ) && ! file_exists( $template_path ) ) {
-				$template_path = UM()->mail()->get_template_file( 'plugin', $template );
-			}
-
 			if ( file_exists( $template_path ) ) {
 				$status = 'edit';
 			}
@@ -532,14 +447,6 @@ if ( ! class_exists( 'um\core\External_Integrations' ) ) {
 			return $this->render_status_icon( $link, $translation[ $status ]['text'], $translation[ $status ]['icon'] );
 		}
 
-
-		/**
-		 * @param $link
-		 * @param $text
-		 * @param $img
-		 *
-		 * @return string
-		 */
 		function render_status_icon( $link, $text, $img ) {
 
 			$icon_html = '<a href="' . $link . '" title="' . $text . '">';

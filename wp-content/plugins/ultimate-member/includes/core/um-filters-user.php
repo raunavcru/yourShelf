@@ -4,15 +4,16 @@
 /**
  * Main admin user actions
  *
- * @param array $actions
- * @param int $user_id
+ * @param $actions
  *
  * @return null
  */
-function um_admin_user_actions_hook( $actions, $user_id ) {
-	um_fetch_user( $user_id );
+function um_admin_user_actions_hook( $actions ) {
+	$actions = null;
 
-	//if ( UM()->roles()->um_current_user_can( 'edit', $user_id ) ) {
+	um_fetch_user( um_profile_id() );
+
+	//if ( UM()->roles()->um_current_user_can( 'edit', um_profile_id() ) ) {
 	if ( current_user_can( 'manage_options' ) ) {
 
 		if ( um_user( 'account_status' ) == 'awaiting_admin_review' ) {
@@ -42,7 +43,7 @@ function um_admin_user_actions_hook( $actions, $user_id ) {
 
 	}
 
-	if ( UM()->roles()->um_current_user_can( 'delete', $user_id ) ) {
+	if ( UM()->roles()->um_current_user_can( 'delete', um_profile_id() ) ) {
 		$actions['um_delete'] = array( 'label' => __( 'Delete this user', 'ultimate-member' ) );
 	}
 
@@ -52,7 +53,7 @@ function um_admin_user_actions_hook( $actions, $user_id ) {
 
 	return $actions;
 }
-add_filter( 'um_admin_user_actions_hook', 'um_admin_user_actions_hook', 10, 2 );
+add_filter( 'um_admin_user_actions_hook', 'um_admin_user_actions_hook', 1 );
 
 
 /**

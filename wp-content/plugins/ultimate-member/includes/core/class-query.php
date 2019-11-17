@@ -94,13 +94,8 @@ if ( ! class_exists( 'um\core\Query' ) ) {
 				return 'reached_maximum_limit';
 			}
 
-			$pages = $wpdb->get_results(
-				"SELECT * 
-				FROM {$wpdb->posts} 
-				WHERE post_type = 'page' AND 
-				      post_status = 'publish'",
-				OBJECT
-			);
+
+			$pages = $wpdb->get_results('SELECT * FROM '.$wpdb->posts.' WHERE post_type = "page" AND post_status = "publish" ', OBJECT);
 
 			$array = array();
 			if( $wpdb->num_rows > 0 ){
@@ -395,18 +390,17 @@ if ( ! class_exists( 'um\core\Query' ) ) {
 		/**
 		 * Capture selected value
 		 *
-		 * @param string $key
-		 * @param string|null $array_key
-		 * @param bool $fallback
+		 * @param $key
+		 * @param null $array_key
+		 * @param null $fallback
 		 * @return int|mixed|null|string
 		 */
-		function get_meta_value( $key, $array_key = null, $fallback = false ) {
+		function get_meta_value( $key, $array_key = null, $fallback = null ) {
 			$post_id = get_the_ID();
 			$try = get_post_meta( $post_id, $key, true );
 
-			//old-old version if ( ! empty( $try ) )
-			//old version if ( $try !== false )
-			if ( $try != '' ) {
+			//old version if ( ! empty( $try ) )
+			if ( false !== $try )
 				if ( is_array( $try ) && in_array( $array_key, $try ) ) {
 					return $array_key;
 				} else if ( is_array( $try ) ) {
@@ -414,7 +408,6 @@ if ( ! class_exists( 'um\core\Query' ) ) {
 				} else {
 					return $try;
 				}
-			}
 
 			if ( $fallback == 'na' ) {
 				$fallback = 0;

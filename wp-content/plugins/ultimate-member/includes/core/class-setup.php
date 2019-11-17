@@ -1,16 +1,14 @@
 <?php
 namespace um\core;
 
-
+// Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
-
 
 if ( ! class_exists( 'um\core\Setup' ) ) {
 
 
 	/**
 	 * Class Setup
-	 *
 	 * @package um\core
 	 */
 	class Setup {
@@ -20,6 +18,7 @@ if ( ! class_exists( 'um\core\Setup' ) ) {
 		 * Setup constructor.
 		 */
 		function __construct() {
+			//add_action('init',  array(&$this, 'install_basics'), 9);
 		}
 
 
@@ -29,6 +28,7 @@ if ( ! class_exists( 'um\core\Setup' ) ) {
 		function run_setup() {
 			$this->install_basics();
 			$this->install_default_forms();
+			//$this->install_default_pages();
 			$this->set_default_settings();
 			$this->set_default_role_meta();
 		}
@@ -184,8 +184,6 @@ if ( ! class_exists( 'um\core\Setup' ) ) {
 					$content = '[ultimatemember form_id="' . $setup_shortcodes[ $slug ] . '"]';
 				}
 
-				$content = apply_filters( 'um_setup_predefined_page_content', $content, $slug );
-
 				$user_page = array(
 					'post_title'        => $array['title'],
 					'post_content'      => $content,
@@ -210,9 +208,6 @@ if ( ! class_exists( 'um\core\Setup' ) ) {
 			}
 
 			update_option( 'um_options', $options );
-
-			// reset rewrite rules after first install of core pages
-			UM()->rewrite()->reset_rules();
 		}
 
 
@@ -220,13 +215,13 @@ if ( ! class_exists( 'um\core\Setup' ) ) {
 		 * Set default UM settings
 		 */
 		function set_default_settings() {
-			$options = get_option( 'um_options', array() );
+			$options = get_option( 'um_options' );
+			$options = empty( $options ) ? array() : $options;
 
 			foreach ( UM()->config()->settings_defaults as $key => $value ) {
 				//set new options to default
-				if ( ! isset( $options[ $key ] ) ) {
+				if ( ! isset( $options[ $key ] ) )
 					$options[ $key ] = $value;
-				}
 			}
 
 			update_option( 'um_options', $options );

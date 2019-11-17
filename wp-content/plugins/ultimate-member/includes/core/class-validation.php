@@ -20,102 +20,6 @@ if ( ! class_exists( 'um\core\Validation' ) ) {
 		function __construct() {
 			$this->regex_safe = '/\A[\w\-\.]+\z/';
 			$this->regex_phone_number = '/\A[\d\-\.\+\(\)\ ]+\z/';
-
-
-			add_filter( 'um_user_pre_updating_files_array', array( $this, 'validate_files' ), 10, 1 );
-			add_filter( 'um_before_save_filter_submitted', array( $this, 'validate_fields_values' ), 10, 2 );
-		}
-
-
-		/**
-		 * Validate files before upload
-		 *
-		 * @param $files
-		 *
-		 * @return mixed
-		 */
-		function validate_files( $files ) {
-			if ( ! empty( $files ) ) {
-				foreach ( $files as $key => $filename ) {
-					if ( validate_file( $filename ) !== 0 ) {
-						unset( $files[ $key ] );
-					}
-				}
-			}
-
-			return $files;
-		}
-
-
-
-		function validate_fields_values( $changes, $args ) {
-			$fields = array();
-			if ( ! empty( $args['custom_fields'] ) ) {
-				$fields = unserialize( $args['custom_fields'] );
-			}
-
-			foreach ( $changes as $key => $value ) {
-				if ( ! isset( $fields[ $key ] ) ) {
-					continue;
-				}
-
-				//rating field validation
-				if ( isset( $fields[ $key ]['type'] ) && $fields[ $key ]['type'] == 'rating' ) {
-					if ( ! is_numeric( $value ) ) {
-						unset( $changes[ $key ] );
-					} else {
-						if ( $fields[ $key ]['number'] == 5 ) {
-							if ( ! in_array( $value, range( 1, 5 ) ) ) {
-								unset( $changes[ $key ] );
-							}
-						} elseif ( $fields[ $key ]['number'] == 10 ) {
-							if ( ! in_array( $value, range( 1, 10 ) ) ) {
-								unset( $changes[ $key ] );
-							}
-						}
-					}
-				}
-
-				//validation of correct values from options in wp-admin
-				$stripslashes = $value;
-				if ( is_string( $value ) ) {
-					$stripslashes = stripslashes( $value );
-				}
-
-				// Dynamic dropdown options population
-				$has_custom_source = apply_filters("um_has_dropdown_options_source__{$key}", false );
-				if ( in_array( $fields[ $key ]['type'], array( 'select','multiselect' ) ) && $has_custom_source ){
-					$arr_options = apply_filters("um_get_field__{$key}", $fields[ $key ]['options'] );
-					$fields[ $key ]['options'] = array_keys( $arr_options['options'] );
-				}
-
-				// Dropdown options source from callback function
-				if ( in_array( $fields[ $key ]['type'], array( 'select','multiselect' ) ) && 
-					isset( $fields[ $key ]['custom_dropdown_options_source'] ) &&
-					! empty( $fields[ $key ]['custom_dropdown_options_source'] ) &&
-					function_exists( $fields[ $key ]['custom_dropdown_options_source'] ) ){
-					$arr_options = call_user_func( $fields[ $key ]['custom_dropdown_options_source'] );
-					$fields[ $key ]['options'] = array_keys( $arr_options );
-				}
-				
-				// Unset changed value that doesn't match the option list
-				if ( in_array( $fields[ $key ]['type'], array( 'select' ) ) &&
-				     ! empty( $stripslashes ) && ! empty( $fields[ $key ]['options'] ) &&
-				     ! in_array( $stripslashes, array_map( 'trim', $fields[ $key ]['options'] ) ) ) {
-					unset( $changes[ $key ] );
-				}
-
-				//validation of correct values from options in wp-admin
-				//the user cannot set invalid value in the hidden input at the page
-				if ( in_array( $fields[ $key ]['type'], array( 'multiselect', 'checkbox', 'radio' ) ) &&
-				     ! empty( $value ) && ! empty( $fields[ $key ]['options'] ) ) {
-					$value = array_map( 'stripslashes', array_map( 'trim', $value ) );
-					$changes[ $key ] = array_intersect( $value, array_map( 'trim', $fields[ $key ]['options'] ) );
-				}
-
-			}
-
-			return $changes;
 		}
 
 
@@ -211,12 +115,10 @@ if ( ! class_exists( 'um\core\Validation' ) ) {
 			 */
 			$regex_safe_username = apply_filters('um_validation_safe_username_regex',$this->regex_safe );
 
-			if ( is_email( $string ) ) {
+			if ( is_email( $string ) )
 				return true;
-			}
-			if ( ! is_email( $string ) && ! preg_match( $regex_safe_username, $string ) ) {
+			if ( !is_email( $string) && !preg_match( $regex_safe_username, $string ) )
 				return false;
-			}
 			return true;
 		}
 
@@ -251,9 +153,9 @@ if ( ! class_exists( 'um\core\Validation' ) ) {
 			 * }
 			 * ?>
 			 */
-			$regex_safe_string = apply_filters( 'um_validation_safe_string_regex', $this->regex_safe );
+			$regex_safe_string = apply_filters('um_validation_safe_string_regex',$this->regex_safe );
 
-			if ( ! preg_match( $regex_safe_string, $string ) ) {
+			if ( !preg_match( $regex_safe_string, $string) ){
 				return false;
 			}
 			return true;
@@ -268,12 +170,10 @@ if ( ! class_exists( 'um\core\Validation' ) ) {
 		 * @return bool
 		 */
 		function is_phone_number( $string ) {
-			if ( ! $string ) {
+			if ( !$string )
 				return true;
-			}
-			if ( ! preg_match( $this->regex_phone_number, $string ) ) {
+			if ( !preg_match( $this->regex_phone_number, $string) )
 				return false;
-			}
 			return true;
 		}
 
@@ -287,21 +187,19 @@ if ( ! class_exists( 'um\core\Validation' ) ) {
 		 * @return bool
 		 */
 		function is_url( $url, $social = false ){
-			if ( ! $url ) {
-				return true;
-			}
+			if ( !$url ) return true;
 
 			if ( $social ) {
 
-				if ( ! filter_var( $url, FILTER_VALIDATE_URL ) && strstr( $url, $social )  ) { // starts with social requested
+				if ( !filter_var($url, FILTER_VALIDATE_URL) && strstr( $url, $social )  ) { // starts with social requested
 					return true;
 				} else {
 
-					if ( filter_var( $url, FILTER_VALIDATE_URL ) && strstr( $url, $social ) ) {
+					if ( filter_var($url, FILTER_VALIDATE_URL) && strstr( $url, $social ) ) {
 						return true;
-					} elseif ( preg_match( $this->regex_safe, $url ) ) {
+					} elseif ( preg_match( $this->regex_safe, $url) ) {
 
-						if ( strstr( $url, '.com' ) ) {
+						if ( strstr( $url, '.com' ) ){
 							return false;
 						} else {
 							return true;
@@ -313,9 +211,8 @@ if ( ! class_exists( 'um\core\Validation' ) ) {
 
 			} else {
 
-				if ( strstr( $url, 'http://' ) || strstr( $url, 'https://' ) ) {
+				if ( strstr( $url, 'http://') || strstr( $url, 'https://') )
 					return true;
-				}
 
 			}
 
@@ -333,8 +230,8 @@ if ( ! class_exists( 'um\core\Validation' ) ) {
 		function randomize( $length = 10 ) {
 			$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 			$result = '';
-			for ( $i = 0; $i < $length; $i++ ) {
-				$result .= $characters[ rand( 0, strlen( $characters ) - 1 ) ];
+			for ($i = 0; $i < $length; $i++) {
+				$result .= $characters[rand(0, strlen($characters) - 1)];
 			}
 			return $result;
 		}
@@ -361,19 +258,22 @@ if ( ! class_exists( 'um\core\Validation' ) ) {
 		 */
 		function random_number( $len = false ) {
 			$ints = array();
-			$len = $len ? $len : rand( 2, 9 );
-			if ( $len > 9 ) {
-				trigger_error( 'Maximum length should not exceed 9' );
+			$len = $len ? $len : rand(2,9);
+			if($len > 9)
+			{
+				trigger_error('Maximum length should not exceed 9');
 				return 0;
 			}
-
-			while( true ) {
+			while(true)
+			{
 				$current = rand(0,9);
-				if ( ! in_array( $current, $ints ) ) {
+				if(!in_array($current,$ints))
+				{
 					$ints[] = $current;
 				}
-				if ( count( $ints ) == $len ) {
-					return implode( $ints );
+				if(count($ints) == $len)
+				{
+					return implode($ints);
 				}
 			}
 		}
@@ -387,19 +287,11 @@ if ( ! class_exists( 'um\core\Validation' ) ) {
 		 *
 		 * @return bool
 		 */
-		function validate_date( $date, $format = 'YYYY/MM/D' ) {
-			if ( strlen( $date ) < strlen( $format ) ) {
-				return false;
-			}
-			if ( $date[4] != '/' ) {
-				return false;
-			}
-			if ( $date[7] != '/' ) {
-				return false;
-			}
-			if ( false === strtotime( $date ) ) {
-				return false;
-			}
+		function validate_date( $date, $format='YYYY/MM/D' ) {
+			if ( strlen( $date ) < strlen($format) ) return false;
+			if ( $date[4] != '/' ) return false;
+			if ( $date[7] != '/' ) return false;
+			if ( false === strtotime($date) ) return false;
 			return true;
 		}
 

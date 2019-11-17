@@ -13,30 +13,26 @@ if ( ! class_exists( 'UM' ) ) {
 	 * @method UM_Followers_API Followers_API()
 	 * @method UM_Friends_API Friends_API()
 	 * @method UM_Instagram_API Instagram_API()
-	 * @method UM_Mailchimp Mailchimp()
+	 * @method UM_Mailchimp_API Mailchimp_API()
 	 * @method UM_Messaging_API Messaging_API()
-	 * @method UM_myCRED myCRED()
-	 * @method UM_Notices Notices()
+	 * @method UM_myCRED_API myCRED_API()
+	 * @method UM_Notices_API Notices_API()
 	 * @method UM_Notifications_API Notifications_API()
-	 * @method UM_Online Online()
+	 * @method UM_Online_API Online_API()
 	 * @method UM_Profile_Completeness_API Profile_Completeness_API()
-	 * @method UM_reCAPTCHA reCAPTCHA()
-	 * @method UM_Reviews Reviews()
+	 * @method UM_reCAPTCHA_API reCAPTCHA_API()
+	 * @method UM_Reviews_API Reviews_API()
 	 * @method UM_Activity_API Activity_API()
 	 * @method UM_Social_Login_API Social_Login_API()
-	 * @method UM_User_Tags User_Tags()
+	 * @method UM_User_Tags_API User_Tags_API()
 	 * @method UM_Verified_Users_API Verified_Users_API()
 	 * @method UM_WooCommerce_API WooCommerce_API()
-	 * @method UM_Terms_Conditions Terms_Conditions()
-	 * @method UM_Private_Content Private_Content()
-	 * @method UM_User_Location User_Location()
+	 * @method UM_Terms_Conditions_API Terms_Conditions_API()
+	 * @method UM_Private_Content_API Private_Content_API()
+	 * @method UM_User_Location_API User_Location_API()
 	 * @method UM_Photos_API Photos_API()
 	 * @method UM_Groups Groups()
-	 * @method UM_Frontend_Posting Frontend_Posting()
-	 * @method UM_Notes Notes()
-	 * @method UM_User_Bookmarks User_Bookmarks()
-	 * @method UM_Unsplash Unsplash()
-	 * @method UM_ForumWP ForumWP()
+	 *
 	 */
 	final class UM extends UM_Functions {
 
@@ -441,18 +437,14 @@ if ( ! class_exists( 'UM' ) ) {
 		 */
 		function activation() {
 			if ( is_multisite() ) {
-				if ( ! is_plugin_active_for_network( um_plugin ) ) {
-					$this->single_site_activation();
-				} else {
-					//get all blogs
-					$blogs = get_sites();
-					if ( ! empty( $blogs ) ) {
-						foreach( $blogs as $blog ) {
-							switch_to_blog( $blog->blog_id );
-							//make activation script for each sites blog
-							$this->single_site_activation();
-							restore_current_blog();
-						}
+				//get all blogs
+				$blogs = get_sites();
+				if ( ! empty( $blogs ) ) {
+					foreach( $blogs as $blog ) {
+						switch_to_blog( $blog->blog_id );
+						//make activation script for each sites blog
+						$this->single_site_activation();
+						restore_current_blog();
 					}
 				}
 			} else {
@@ -476,8 +468,6 @@ if ( ! class_exists( 'UM' ) ) {
 				if ( ! get_option( 'show_avatars' ) ) {
 					update_option( 'show_avatars', 1 );
 				}
-			} else {
-				UM()->options()->update( 'rest_api_version', '1.0' );
 			}
 
 			if ( $version != ultimatemember_version ) {
@@ -517,10 +507,8 @@ if ( ! class_exists( 'UM' ) ) {
 				$this->admin_upgrade()->init_packages_ajax_handlers();
 				$this->admin_gdpr();
 				$this->columns();
-				$this->admin()->notices();
+				$this->notices();
 				$this->admin_navmenu();
-				$this->theme_updater();
-				$this->access();
 			} elseif ( $this->is_request( 'admin' ) ) {
 				$this->admin();
 				$this->admin_menu();
@@ -529,13 +517,12 @@ if ( ! class_exists( 'UM' ) ) {
 				$this->columns();
 				$this->admin_enqueue();
 				$this->metabox();
-				$this->admin()->notices();
+				$this->notices();
 				$this->users();
 				$this->dragdrop();
 				$this->plugin_updater();
 				$this->admin_gdpr();
 				$this->admin_navmenu();
-				$this->theme_updater();
 			} elseif ( $this->is_request( 'frontend' ) ) {
 				$this->enqueue();
 				$this->account();
@@ -544,6 +531,7 @@ if ( ! class_exists( 'UM' ) ) {
 				$this->register();
 				$this->user_posts();
 				$this->access();
+				$this->members();
 				$this->logout();
 			}
 
@@ -563,26 +551,6 @@ if ( ! class_exists( 'UM' ) ) {
 			$this->mobile();
 			$this->external_integrations();
 			$this->gdpr();
-			$this->member_directory();
-
-			//if multisite networks active
-			if ( is_multisite() ) {
-				$this->multisite();
-			}
-
-		}
-
-
-		/**
-		 * @since 2.1.0
-		 *
-		 * @return um\core\Member_Directory()
-		 */
-		function member_directory() {
-			if ( empty( $this->classes['member_directory'] ) ) {
-				$this->classes['member_directory'] = new um\core\Member_Directory();
-			}
-			return $this->classes['member_directory'];
 		}
 
 
@@ -674,18 +642,6 @@ if ( ! class_exists( 'UM' ) ) {
 				$this->classes['plugin_updater'] = new um\core\Plugin_Updater();
 			}
 			return $this->classes['plugin_updater'];
-		}
-
-
-		/**
-		 * @since 2.0.45
-		 * @return um\admin\core\Admin_Theme_Updater()
-		 */
-		function theme_updater() {
-			if ( empty( $this->classes['theme_updater'] ) ) {
-				$this->classes['theme_updater'] = new um\admin\core\Admin_Theme_Updater();
-			}
-			return $this->classes['theme_updater'];
 		}
 
 
@@ -858,6 +814,19 @@ if ( ! class_exists( 'UM' ) ) {
 		/**
 		 * @since 2.0
 		 *
+		 * @return um\admin\core\Admin_Notices()
+		 */
+		function notices() {
+			if ( empty( $this->classes['admin_notices'] ) ) {
+				$this->classes['admin_notices'] = new um\admin\core\Admin_Notices();
+			}
+			return $this->classes['admin_notices'];
+		}
+
+
+		/**
+		 * @since 2.0
+		 *
 		 * @return um\admin\core\Admin_Users()
 		 */
 		function users() {
@@ -967,20 +936,11 @@ if ( ! class_exists( 'UM' ) ) {
 		/**
 		 * @since 2.0
 		 *
-		 * @return um\core\rest\API_v1|um\core\rest\API_v2
+		 * @return um\core\REST_API
 		 */
 		function rest_api() {
-
-			$api_version = $this->options()->get( 'rest_api_version' );
-
 			if ( empty( $this->classes['rest_api'] ) ) {
-				if ( '1.0' === $api_version ) {
-					$this->classes['rest_api'] = new um\core\rest\API_v1();
-				} elseif ( '2.0' === $api_version ) {
-					$this->classes['rest_api'] = new um\core\rest\API_v2();
-				} else {
-					$this->classes['rest_api'] = new um\core\rest\API_v1();
-				}
+				$this->classes['rest_api'] = new um\core\REST_API();
 			}
 
 			return $this->classes['rest_api'];
@@ -1228,6 +1188,20 @@ if ( ! class_exists( 'UM' ) ) {
 		/**
 		 * @since 2.0
 		 *
+		 * @return um\core\Chart
+		 */
+		function chart() {
+			if ( empty( $this->classes['chart'] ) ) {
+				$this->classes['chart'] = new um\core\Chart();
+			}
+
+			return $this->classes['chart'];
+		}
+
+
+		/**
+		 * @since 2.0
+		 *
 		 * @return um\core\Builtin
 		 */
 		function builtin() {
@@ -1323,15 +1297,11 @@ if ( ! class_exists( 'UM' ) ) {
 
 
 		/**
-		 * @deprecated 2.1.0
-		 *
 		 * @since 2.0
 		 *
 		 * @return um\core\Members
 		 */
 		function members() {
-			um_deprecated_function( 'UM()->members()', '2.1.0', 'UM()->member_directory()' );
-
 			if ( empty( $this->classes['members'] ) ) {
 				$this->classes['members'] = new um\core\Members();
 			}
@@ -1411,21 +1381,6 @@ if ( ! class_exists( 'UM' ) ) {
 
 
 		/**
-		 * @since 2.0.44
-		 *
-		 * @return um\core\Multisite
-		 */
-		function multisite() {
-
-			if ( empty( $this->classes['multisite'] ) ) {
-				$this->classes['multisite'] = new um\core\Multisite();
-			}
-
-			return $this->classes['multisite'];
-		}
-
-
-		/**
 		 * Include files with hooked filters/actions
 		 *
 		 * @since 2.0
@@ -1443,6 +1398,7 @@ if ( ! class_exists( 'UM' ) ) {
 			require_once 'core/um-actions-register.php';
 			require_once 'core/um-actions-profile.php';
 			require_once 'core/um-actions-account.php';
+			require_once 'core/um-actions-members.php';
 			require_once 'core/um-actions-global.php';
 			require_once 'core/um-actions-user.php';
 			require_once 'core/um-actions-save-profile.php';
@@ -1454,9 +1410,7 @@ if ( ! class_exists( 'UM' ) ) {
 			require_once 'core/um-filters-navmenu.php';
 			require_once 'core/um-filters-avatars.php';
 			require_once 'core/um-filters-user.php';
-
-			//require_once 'core/um-filters-members.php';
-
+			require_once 'core/um-filters-members.php';
 			require_once 'core/um-filters-profile.php';
 			require_once 'core/um-filters-account.php';
 			require_once 'core/um-filters-misc.php';
@@ -1473,6 +1427,7 @@ if ( ! class_exists( 'UM' ) ) {
 		function widgets_init() {
 			register_widget( 'um\widgets\UM_Search_Widget' );
 		}
+
 	}
 }
 

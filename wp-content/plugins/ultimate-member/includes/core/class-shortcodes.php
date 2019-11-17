@@ -36,7 +36,9 @@ if ( ! class_exists( 'um\core\Shortcodes' ) ) {
 			add_shortcode( 'um_show_content', array( &$this, 'um_shortcode_show_content_for_role' ) );
 			add_shortcode( 'ultimatemember_searchform', array( &$this, 'ultimatemember_searchform' ) );
 
+
 			add_filter( 'body_class', array( &$this, 'body_class' ), 0 );
+			add_action( 'template_redirect', array( &$this, 'is_um_page' ) );
 
 			add_filter( 'um_shortcode_args_filter', array( &$this, 'display_logout_form' ), 99 );
 			add_filter( 'um_shortcode_args_filter', array( &$this, 'parse_shortcode_args' ), 99 );
@@ -361,19 +363,22 @@ if ( ! class_exists( 'um\core\Shortcodes' ) ) {
 
 			$args = wp_parse_args( $args, $defaults );
 
+
+
 			if ( ! is_user_logged_in() ) {
 				if ( $args['show_lock'] == 'no' ) {
 					echo '';
 				} else {
 					$args['lock_text'] = $this->convert_locker_tags( $args['lock_text'] );
-					UM()->get_template( 'login-to-view.php', '', $args, true );
+					$this->set_args = $args;
+					$this->load_template( 'login-to-view' );
 				}
 			} else {
 				echo do_shortcode( $this->convert_locker_tags( wpautop( $content ) ) );
 			}
 
 			$output = ob_get_clean();
-			return htmlspecialchars_decode( $output );
+			return $output;
 		}
 
 
@@ -385,7 +390,7 @@ if ( ! class_exists( 'um\core\Shortcodes' ) ) {
 		 *
 		 * @return string
 		 */
-		function um_loggedout( $args = array(), $content = '' ) {
+		function um_loggedout($args = array(), $content = "") {
 			ob_start();
 
 			// Hide for logged in users
@@ -539,22 +544,21 @@ if ( ! class_exists( 'um\core\Shortcodes' ) ) {
 		 */
 		function load( $args ) {
 			$defaults = array();
-			$args = wp_parse_args( $args, $defaults );
+			$args = wp_parse_args($args, $defaults);
 
 			// when to not continue
-			$this->form_id = isset( $args['form_id'] ) ? $args['form_id'] : null;
-			if ( ! $this->form_id ) {
+			$this->form_id = (isset($args['form_id'])) ? $args['form_id'] : null;
+			if (!$this->form_id) {
 				return;
 			}
 
-			$this->form_status = get_post_status( $this->form_id );
-			if ( $this->form_status != 'publish' ) {
+			$this->form_status = get_post_status($this->form_id);
+			if ($this->form_status != 'publish') {
 				return;
 			}
 
 			// get data into one global array
 			$post_data = UM()->query()->post_data( $this->form_id );
-			$args = array_merge( $args, $post_data );
 
 			ob_start();
 
@@ -579,7 +583,7 @@ if ( ! class_exists( 'um\core\Shortcodes' ) ) {
 			 * }
 			 * ?>
 			 */
-			$args = apply_filters( 'um_pre_args_setup', $args );
+			$args = apply_filters( 'um_pre_args_setup', $post_data );
 
 			if ( ! isset( $args['template'] ) ) {
 				$args['template'] = '';
@@ -631,10 +635,7 @@ if ( ! class_exists( 'um\core\Shortcodes' ) ) {
 			 */
 			$args = apply_filters( 'um_shortcode_args_filter', $args );
 
-			/**
-			 * @var string $mode
-			 */
-			extract( $args, EXTR_SKIP );
+			extract($args, EXTR_SKIP);
 
 			//not display on admin preview
 			if ( empty( $_POST['act_id'] ) || $_POST['act_id'] != 'um_admin_preview_form' ) {
@@ -646,12 +647,6 @@ if ( ! class_exists( 'um\core\Shortcodes' ) ) {
 
 			// for profiles only
 			if ( $mode == 'profile' && um_profile_id() ) {
-
-				//set requested user if it's not setup from permalinks (for not profile page in edit mode)
-				if ( ! um_get_requested_user() ) {
-					um_set_requested_user( um_profile_id() );
-				}
-
 				if ( ! empty( $args['use_custom_settings'] ) ) { // Custom Form settings
 					$current_user_roles = UM()->roles()->get_all_user_roles( um_profile_id() );
 
@@ -988,8 +983,6 @@ if ( ! class_exists( 'um\core\Shortcodes' ) ) {
 		 * @return mixed|string
 		 */
 		function convert_locker_tags( $str ) {
-			add_filter( 'um_template_tags_patterns_hook', array( &$this, 'add_placeholder' ), 10, 1 );
-			add_filter( 'um_template_tags_replaces_hook', array( &$this, 'add_replace_placeholder' ), 10, 1 );
 			return um_convert_tags( $str, array(), false );
 		}
 
@@ -1009,7 +1002,6 @@ if ( ! class_exists( 'um\core\Shortcodes' ) ) {
 				'{display_name}',
 				'{user_avatar_small}',
 				'{username}',
-				'{nickname}',
 			);
 
 			/**
@@ -1053,10 +1045,6 @@ if ( ! class_exists( 'um\core\Shortcodes' ) ) {
 
 						if ( $usermeta == 'username' ) {
 							$value = um_user( 'user_login' );
-						}
-
-						if ( $usermeta == 'nickname' ) {
-							$value = um_profile( 'nickname' );
 						}
 
 						/**
@@ -1158,88 +1146,16 @@ if ( ! class_exists( 'um\core\Shortcodes' ) ) {
 		 * @return string
 		 */
 		public function ultimatemember_searchform( $args = array(), $content = "" ) {
-			if ( ! UM()->options()->get( 'members_page' ) ) {
-				return '';
-			}
+			// turn off buffer
+			ob_start();
 
-			$member_directory_ids = array();
+			// load template
+			$this->load_template( 'searchform' );
 
-			$page_id = UM()->config()->permalinks['members'];
-			if ( ! empty( $page_id ) ) {
-				$members_page = get_post( $page_id );
-				if ( ! empty( $members_page ) && ! is_wp_error( $members_page ) ) {
-					if ( ! empty( $members_page->post_content ) ) {
-						preg_match_all( '/\[ultimatemember[^\]]*?form_id\=[\'"]*?(\d+)[\'"]*?/i', $members_page->post_content, $matches );
-						if ( ! empty( $matches[1] ) && is_array( $matches[1] ) ) {
-							$member_directory_ids = array_map( 'absint', $matches[1] );
-						}
-					}
-				}
-			}
-
-			if ( empty( $member_directory_ids ) ) {
-				return '';
-			}
-
-			//current user priority role
-			$priority_user_role = false;
-			if ( is_user_logged_in() ) {
-				$priority_user_role = UM()->roles()->get_priority_user_role( get_current_user_id() );
-			}
-
-			$query = array();
-			foreach ( $member_directory_ids as $directory_id ) {
-				$directory_data = UM()->query()->post_data( $directory_id );
-
-				if ( isset( $directory_data['roles_can_search'] ) ) {
-					$directory_data['roles_can_search'] = maybe_unserialize( $directory_data['roles_can_search'] );
-				}
-
-				$show_search = empty( $directory_data['roles_can_search'] ) || ( ! empty( $priority_user_role ) && in_array( $priority_user_role, $directory_data['roles_can_search'] ) );
-				if ( empty( $directory_data['search'] ) || ! $show_search ) {
-					continue;
-				}
-
-				$hash = UM()->member_directory()->get_directory_hash( $directory_id );
-
-				$query[ 'search_' . $hash ] = ! empty( $_GET[ 'search_' . $hash ] ) ? $_GET[ 'search_' . $hash ] : '';
-			}
-
-			if ( empty( $query ) ) {
-				return '';
-			}
-
-			$search_value = array_values( $query );
-
-			$template = UM()->get_template( 'searchform.php', '', array( 'query' => $query, 'search_value' => $search_value[0], 'members_page' => um_get_core_page( 'members' ) ) );
+			// get the buffer
+			$template = ob_get_clean();
 
 			return $template;
-		}
-
-
-		/**
-		 * UM Placeholders for login referrer
-		 *
-		 * @param $placeholders
-		 *
-		 * @return array
-		 */
-		function add_placeholder( $placeholders ) {
-			$placeholders[] = '{login_referrer}';
-			return $placeholders;
-		}
-
-
-		/**
-		 * UM Replace Placeholders for login referrer
-		 *
-		 * @param $replace_placeholders
-		 *
-		 * @return array
-		 */
-		function add_replace_placeholder( $replace_placeholders ) {
-			$replace_placeholders[] = um_dynamic_login_page_redirect();
-			return $replace_placeholders;
 		}
 
 	}

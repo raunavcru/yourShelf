@@ -11,34 +11,9 @@ if ( ! class_exists( 'UM_Functions' ) ) {
 
 
 		/**
-		 * Store URL
-		 *
-		 * @var string
-		 */
-		var $store_url = 'https://ultimatemember.com/';
-
-
-		/**
-		 * WP remote Post timeout
-		 * @var int
-		 */
-		var $request_timeout = 60;
-
-
-		/**
 		 * UM_Functions constructor.
 		 */
 		function __construct() {
-		}
-
-
-		/**
-		 * Check if AJAX now
-		 *
-		 * @return bool
-		 */
-		function is_ajax() {
-			return function_exists( 'wp_doing_ajax' ) ? wp_doing_ajax() : defined( 'DOING_AJAX' );
 		}
 
 
@@ -177,9 +152,8 @@ if ( ! class_exists( 'UM_Functions' ) ) {
 			}
 
 			$path = '';
-			if ( $basename ) {
-				// use '/' instead of "DIRECTORY_SEPARATOR", because wp_normalize_path makes the correct replace
-				$array = explode( '/', wp_normalize_path( trim( $basename ) ) );
+			if( $basename ) {
+				$array = explode( '/', trim( $basename, '/' ) );
 				$path  = $array[0];
 			}
 
@@ -287,16 +261,16 @@ if ( ! class_exists( 'UM_Functions' ) ) {
 		function locate_template( $template_name, $path = '' ) {
 			// check if there is template at theme folder
 			$template = locate_template( array(
-				trailingslashit( 'ultimate-member' . DIRECTORY_SEPARATOR . $path ) . $template_name
+				trailingslashit( 'ultimate-member/' . $path ) . $template_name
 			) );
 
-			if ( ! $template ) {
-				if ( $path ) {
+			if( !$template ) {
+				if( $path ) {
 					$template = trailingslashit( trailingslashit( WP_PLUGIN_DIR ) . $path );
 				} else {
 					$template = trailingslashit( um_path );
 				}
-				$template .= 'templates' . DIRECTORY_SEPARATOR . $template_name;
+				$template .= 'templates/' . $template_name;
 			}
 
 
@@ -354,42 +328,5 @@ if ( ! class_exists( 'UM_Functions' ) ) {
 			$cpt = apply_filters( 'um_cpt_list', array( 'um_form', 'um_directory' ) );
 			return $cpt;
 		}
-
-
-		/**
-		 * @param array $array
-		 * @param string $key
-		 * @param array $insert_array
-		 *
-		 * @return array
-		 */
-		function array_insert_before( $array, $key, $insert_array ) {
-			$index = array_search( $key, array_keys( $array ) );
-			if ( $index === false ) {
-				return $array;
-			}
-
-			$array = array_slice( $array, 0, $index, true ) +
-			         $insert_array +
-			         array_slice( $array, $index, count( $array ) - 1, true );
-
-			return $array;
-		}
-
-
-		/**
-		 * @since 2.1.0
-		 *
-		 * @param $var
-		 * @return array|string
-		 */
-		function clean_array( $var ) {
-			if ( is_array( $var ) ) {
-				return array_map( array( $this, 'clean_array' ), $var );
-			} else {
-				return is_scalar( $var ) ? sanitize_text_field( $var ) : $var;
-			}
-		}
-
 	}
 }

@@ -24,7 +24,7 @@ class UM_Search_Widget extends \WP_Widget {
 		'um_search_widget',
 
 		// Widget name will appear in UI
-		__( 'Ultimate Member - Search', 'ultimate-member' ),
+		__('Ultimate Member - Search', 'ultimate-member'),
 
 		// Widget description
 		array( 'description' => __( 'Shows the search member form.', 'ultimate-member' ), )
@@ -50,7 +50,7 @@ class UM_Search_Widget extends \WP_Widget {
 		}
 
 		// display the search form
-		echo do_shortcode( '[ultimatemember_searchform /]' );
+		um_search_form();
 
 		echo $args['after_widget'];
 	}
@@ -78,10 +78,8 @@ class UM_Search_Widget extends \WP_Widget {
 		?>
 
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php _e( 'Title', 'ultimate-member' ); ?>:</label>
-			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"
-			       name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text"
-			       value="<?php echo esc_attr( $title ); ?>" />
+			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
+			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
 		</p>
 
 		<?php

@@ -1,5 +1,6 @@
-<?php if ( ! defined( 'ABSPATH' ) ) exit;
-
+<?php
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  * Validate for errors in account form
@@ -8,13 +9,8 @@
  */
 function um_submit_account_errors_hook( $args ) {
 
-	if ( ! isset( $_POST['um_account_submit'] ) ) {
+	if ( ! isset( $_POST['um_account_submit'] ) )
 		return;
-	}
-
-	if ( ! wp_verify_nonce( $_POST[ 'um_account_nonce_' . $_POST['_um_account_tab'] ], 'um_update_account_' . $_POST['_um_account_tab'] ) ) {
-		UM()->form()->add_error('um_account_security', __( 'Are you hacking? Please try again!', 'ultimate-member' ) );
-	}
 
 	$user = get_user_by( 'login', um_user( 'user_login' ) );
 
@@ -23,10 +19,10 @@ function um_submit_account_errors_hook( $args ) {
 			case 'delete': {
 				// delete account
 				if ( strlen(trim( $_POST['single_user_password'] ) ) == 0 ) {
-					UM()->form()->add_error( 'single_user_password', __( 'You must enter your password', 'ultimate-member' ) );
+					UM()->form()->add_error('single_user_password', __('You must enter your password','ultimate-member') );
 				} else {
 					if ( ! wp_check_password( $_POST['single_user_password'], $user->data->user_pass, $user->data->ID ) ) {
-						UM()->form()->add_error( 'single_user_password', __( 'This is not your password', 'ultimate-member' ) );
+						UM()->form()->add_error('single_user_password', __('This is not your password','ultimate-member') );
 					}
 				}
 
@@ -94,29 +90,14 @@ function um_submit_account_errors_hook( $args ) {
 				}
 
 				if ( isset( $_POST['user_email'] ) ) {
-
-					if ( strlen( trim( $_POST['user_email'] ) ) == 0 ) {
+					if ( strlen( trim( $_POST['user_email'] ) ) == 0 )
 						UM()->form()->add_error( 'user_email', __( 'You must provide your e-mail', 'ultimate-member' ) );
-					}
 
-					if ( ! is_email( $_POST['user_email'] ) ) {
+					if ( ! is_email( $_POST['user_email'] ) )
 						UM()->form()->add_error( 'user_email', __( 'Please provide a valid e-mail', 'ultimate-member' ) );
-					}
 
-					if ( email_exists( $_POST['user_email'] ) && email_exists( $_POST['user_email'] ) != get_current_user_id() ) {
+					if ( email_exists( $_POST['user_email'] ) && email_exists( $_POST['user_email'] ) != get_current_user_id() )
 						UM()->form()->add_error( 'user_email', __( 'Email already linked to another account', 'ultimate-member' ) );
-					}
-				}
-
-				// check account password
-				if ( UM()->options()->get( 'account_general_password' ) ) {
-					if ( strlen( trim( $_POST['single_user_password'] ) ) == 0 ) {
-						UM()->form()->add_error('single_user_password', __( 'You must enter your password', 'ultimate-member' ) );
-					} else {
-						if ( ! wp_check_password( $_POST['single_user_password'], $user->data->user_pass, $user->data->ID ) ) {
-							UM()->form()->add_error('single_user_password', __( 'This is not your password', 'ultimate-member' ) );
-						}
-					}
 				}
 
 				break;
@@ -170,14 +151,14 @@ function um_submit_account_details( $args ) {
 
 		UM()->user()->password_changed();
 
-		add_filter( 'send_password_change_email', '__return_false' );
+		do_action( 'send_password_change_email', $args );
 
 		//clear all sessions with old passwords
 		$user = WP_Session_Tokens::get_instance( um_user( 'ID' ) );
 		$user->destroy_all();
 
 		wp_set_password( $changes['user_pass'], um_user( 'ID' ) );
-
+			
 		wp_signon( array( 'user_login' => um_user( 'user_login' ), 'user_password' =>  $changes['user_pass'] ) );
 	}
 
@@ -185,8 +166,7 @@ function um_submit_account_details( $args ) {
 	// delete account
 	$user = get_user_by( 'login', um_user( 'user_login' ) );
 
-	if ( 'delete' == $current_tab && isset( $_POST['single_user_password'] ) &&
-	     wp_check_password( $_POST['single_user_password'], $user->data->user_pass, $user->data->ID ) ) {
+	if ( 'delete' == $current_tab && isset( $_POST['single_user_password'] ) && wp_check_password( $_POST['single_user_password'], $user->data->user_pass, $user->data->ID ) ) {
 		if ( current_user_can( 'delete_users' ) || um_user( 'can_delete_profile' ) ) {
 			UM()->user()->delete();
 
@@ -223,50 +203,53 @@ function um_submit_account_details( $args ) {
 		}
 	}
 
+
 	$arr_fields = array();
-	if ( UM()->account()->is_secure_enabled() ) {
-		$account_fields = get_user_meta( um_user( 'ID' ), 'um_account_secure_fields', true );
+	$account_fields = get_user_meta( um_user('ID'), 'um_account_secure_fields', true );
 
-		/**
-		 * UM hook
-		 *
-		 * @type filter
-		 * @title um_secure_account_fields
-		 * @description Change secure account fields
-		 * @input_vars
-		 * [{"var":"$fields","type":"array","desc":"Secure account fields"},
-		 * {"var":"$user_id","type":"int","desc":"User ID"}]
-		 * @change_log
-		 * ["Since: 2.0"]
-		 * @usage
-		 * <?php add_filter( 'um_secure_account_fields', 'function_name', 10, 2 ); ?>
-		 * @example
-		 * <?php
-		 * add_filter( 'um_secure_account_fields', 'my_secure_account_fields', 10, 2 );
-		 * function my_secure_account_fields( $fields, $user_id ) {
-		 *     // your code here
-		 *     return $fields;
-		 * }
-		 * ?>
-		 */
-		$secure_fields = apply_filters( 'um_secure_account_fields', $account_fields, um_user( 'ID' ) );
-
-		if ( isset( $secure_fields[ $current_tab ] ) && is_array( $secure_fields[ $current_tab ] ) ) {
-			$arr_fields = array_merge( $arr_fields, $secure_fields[ $current_tab ] );
+	/**
+	 * UM hook
+	 *
+	 * @type filter
+	 * @title um_secure_account_fields
+	 * @description Change secure account fields
+	 * @input_vars
+	 * [{"var":"$fields","type":"array","desc":"Secure account fields"},
+	 * {"var":"$user_id","type":"int","desc":"User ID"}]
+	 * @change_log
+	 * ["Since: 2.0"]
+	 * @usage
+	 * <?php add_filter( 'um_secure_account_fields', 'function_name', 10, 2 ); ?>
+	 * @example
+	 * <?php
+	 * add_filter( 'um_secure_account_fields', 'my_secure_account_fields', 10, 2 );
+	 * function my_secure_account_fields( $fields, $user_id ) {
+	 *     // your code here
+	 *     return $fields;
+	 * }
+	 * ?>
+	 */
+	$secure_fields = apply_filters( 'um_secure_account_fields', $account_fields, um_user( 'ID' ) );
+		
+	if ( is_array( $secure_fields  ) ) {
+		foreach ( $secure_fields as $tab_key => $fields ) {
+			foreach ( $fields as $key => $value ) {
+				$arr_fields[ ] = $key;
+			}
 		}
 	}
 
+ 
 	$changes = array();
 	foreach ( $_POST as $k => $v ) {
-		if ( ! in_array( $k, $arr_fields ) ) {
+		if ( strstr( $k, 'password' ) || strstr( $k, 'um_account' ) || ! in_array( $k, $arr_fields ) )
 			continue;
-		}
 
 		$changes[ $k ] = $v;
 	}
 
-	if ( isset( $changes['hide_in_members'] ) && ( $changes['hide_in_members'] == __( 'No', 'ultimate-member' ) || $changes['hide_in_members'] == 'No' ) ) {
-		delete_user_meta( um_user( 'ID' ), 'hide_in_members' );
+	if ( isset( $changes['hide_in_members'] ) && ( $changes['hide_in_members'] == __('No','ultimate-member') || $changes['hide_in_members'] == 'No' ) ) {
+		delete_user_meta( um_user('ID'), 'hide_in_members' );
 		unset( $changes['hide_in_members'] );
 	}
 
@@ -316,11 +299,6 @@ function um_submit_account_details( $args ) {
 	do_action( 'um_account_pre_update_profile', $changes, um_user( 'ID' ) );
 
 	UM()->user()->update_profile( $changes );
-
-
-	if ( UM()->account()->is_secure_enabled() ) {
-		update_user_meta( um_user( 'ID' ), 'um_account_secure_fields', array() );
-	}
 
 	/**
 	 * UM hook
@@ -393,7 +371,7 @@ function um_account_page_hidden_fields( $args ) {
 	?>
 
 	<input type="hidden" name="_um_account" id="_um_account" value="1" />
-	<input type="hidden" name="_um_account_tab" id="_um_account_tab" value="<?php echo esc_attr( UM()->account()->current_tab ); ?>" />
+	<input type="hidden" name="_um_account_tab" id="_um_account_tab" value="<?php echo UM()->account()->current_tab;?>" />
 
 	<?php
 }
@@ -411,25 +389,26 @@ add_action( 'um_before_account_delete', 'um_before_account_delete' );
 
 /**
  * Before notifications account tab content
- *
- * @param array $args
- *
- * @throws Exception
  */
-function um_before_account_notifications( $args = array() ) {
-	$output = UM()->account()->get_tab_fields( 'notifications', $args );
-	if ( substr_count( $output, '_enable_new_' ) ) { ?>
-
-		<div class="um-field">
-			<div class="um-field-label">
-				<label for=""><?php _e( 'Email me when', 'ultimate-member' ); ?></label>
-				<div class="um-clear"></div>
-			</div>
+function um_before_account_notifications() { ?>
+	<div class="um-field">
+		<div class="um-field-label">
+			<label for=""><?php _e( 'Email me when', 'ultimate-member' ); ?></label>
+			<div class="um-clear"></div>
 		</div>
-
-	<?php }
-}
+	</div>
+<?php }
 add_action( 'um_before_account_notifications', 'um_before_account_notifications' );
+
+
+/**
+ *  Update account fields to secure the account submission
+ */
+function um_account_secure_registered_fields(){
+	$secure_fields = UM()->account()->register_fields;
+	update_user_meta( um_user('ID'), 'um_account_secure_fields', $secure_fields );
+}
+add_action( 'wp_footer', 'um_account_secure_registered_fields' );
 
 
 /**

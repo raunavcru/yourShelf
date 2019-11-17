@@ -4,10 +4,9 @@ Plugin URI: https://ultimatemember.com/
 Contributors: ultimatemember, champsupertramp, nsinelnikov
 Donate link: 
 Tags: community, member, membership, user-profile, user-registration
-Requires PHP: 5.6
-Requires at least: 5.0
-Tested up to: 5.3
-Stable tag: 2.1.1
+Requires at least: 4.7
+Tested up to: 5.0
+Stable tag: 2.0.38
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -42,10 +41,6 @@ Read about all of the plugin's features at [Ultimate Member](https://ultimatemem
 
 Ultimate Member has a range of extensions that allow you to extend the power of the plugin. You can purchase all of these extensions at a significant discount with our [All Access Pass](https://ultimatemember.com/pricing/) or you can purchase extensions individually.
 
-* [Unsplash](https://ultimatemember.com/extensions/unsplash/) - Allow users to select a profile cover photo from [Unsplash](https://unsplash.com/) from their profile
-* [User Bookmarks](https://ultimatemember.com/extensions/user-bookmarks/) - Allow users to bookmark content from your website
-* [User Photos](https://ultimatemember.com/extensions/user-photos/) - Allow users to upload photos to their profile
-* [Groups](https://ultimatemember.com/extensions/groups/) - Allow users to create and join groups around shared topics, interests etc.
 * [Private Content](https://ultimatemember.com/extensions/private-content/) - Display private content to logged in users that only they can access
 * [Instagram](https://ultimatemember.com/extensions/instagram/) - Allow users to show their Instagram photos on their profile
 * [User Tags](https://ultimatemember.com/extensions/user-tags/) - Lets you add a user tag system to your website
@@ -58,15 +53,16 @@ Ultimate Member has a range of extensions that allow you to extend the power of 
 * [bbPress](https://ultimatemember.com/extensions/bbpress/) - With the bbPress extension you can beautifully integrate Ultimate Member with bbPress
 * [MailChimp](https://ultimatemember.com/extensions/mailchimp/) - Allow users to subscribe to your MailChimp lists when they signup on your site and sync user meta to MailChimp
 * [User Reviews](https://ultimatemember.com/extensions/user-reviews/) - Allow users to rate & review each other using a 5 star rate/review system
-* [Verified Users](https://ultimatemember.com/extensions/verified-users/) - Add a user verification system to your site so user accounts can be verified
+* [Verified Users](https://ultimatemember.com/extensions/verified-users/) - Add a user verficiation system to your site so user accounts can be verified
 * [myCRED](https://ultimatemember.com/extensions/mycred/) - With the myCRED extension you can integrate Ultimate Member with the popular myCRED points management plugin
 * [Notices](https://ultimatemember.com/extensions/notices/) - Alert users to important information using conditional notices
 * [Profile Completeness](https://ultimatemember.com/extensions/profile-completeness/) - Encourage or force users to complete their profiles with the profile completeness extension
 * [Friends](https://ultimatemember.com/extensions/friends/) - Allows users to become friends by sending & accepting/rejecting friend requests
+* [User Photos](https://ultimatemember.com/extensions/user-photos/) - Allow users to upload photos to their profile
+* [Groups](https://ultimatemember.com/extensions/groups/) - Allow users to create and join groups around shared topics, interests etc.
 
 = Free Extensions =
 
-* [ForumWP](https://ultimatemember.com/extensions/forumwp/) - This free extension integrates Ultimate Member with the forum plugin [ForumWP](https://forumwpplugin.com).
 * [Terms & Conditions](https://ultimatemember.com/extensions/terms-conditions/) - Add a terms and condition checkbox to your registration forms & require users to agree to your T&Cs before registering on your site.
 * [Google reCAPTCHA](https://ultimatemember.com/extensions/google-recaptcha/) - Stop bots on your registration & login forms with Google reCAPTCHA
 * [Online Users](https://ultimatemember.com/extensions/online-users/) - Display what users are online with this extension
@@ -74,10 +70,6 @@ Ultimate Member has a range of extensions that allow you to extend the power of 
 = Theme =
 
 Our official [theme](https://ultimatemember.com/theme/) is purpose built for websites that have logged in and out users. The [theme](https://ultimatemember.com/theme/) has deep integration with Ultimate Member plugin and the extensions, different header designs for logged-in/out users and works alongside the Beaver Builder and Elementor page builders.
-
-= ForumWP =
-
-In addition to Ultimate Member we also have another plugin called [ForumWP](https://forumwpplugin.com/). ForumWP is a forum plugin which adds an online forum to your website, allowing users to create topics and write replies. Forums are a great way to build and grow an online community.
 
 = Development * Translations =
 
@@ -139,262 +131,7 @@ The plugin works with popular caching plugins by automatically excluding Ultimat
 
 == Changelog ==
 
-= Important: =
-
-* To learn more about version 2.1 please see this [topic](https://wordpress.org/support/topic/version-2-1-4/)
-* UM2.1+ is a significant update to the Member Directories' code base from 2.0.x. Please make sure you take a full-site backup with restore point before updating the plugin
-
-= 2.1.1: November 12, 2019 =
-
-* Bugfixes:
-  - Fixed admin actions hook
-  - Fixed JS templates for list and grid view when user metakeys contain "-" symbol
-  - Fixed JS template list "$show_block" issue
-  - Fixed member directory search if 'roles_can_search' is set
-  - Fixed member directory filters bar animation
-  - Fixed save profile with Last Login field
-  - Fixed admin builder for profile form, show not editable fields
-
-= 2.1.0: November 11, 2019 =
-
-* Enhancements:
-  - Added member directory list view
-  - Added member directory search bar
-  - Added member directory filters by range, date and time
-  - Added AJAXed member directories
-  - Updated member directories' search engine
-  - Additional parameter 'user_id' to action hook 'um_user_after_updating_profile'
-  - Added ability to set profile/cover image sizes from Ultimate Member -> General -> Uploads settings or Original size
-  - Added ability edit cover photo HTML (e.g. for adding some HTML attributes. See how add srcset attribute based on all generated cover sizes [here](https://docs.ultimatemember.com/article/1519-change-cover-photo-html))
-  - Added custom date format for Date Picker field
-  - Added hook 'um_show_meta_item_html' to customize user meta HTML at User Profile page
-  - Added "aria-label" attribute in Field icon
-
-* Bugfixes:
-  - Optimized usermeta for Account submit security
-  - Fixed flushing rewrite rules on every page reloading
-  - Fixed Gmail & Yahoo UTF-8 encoding of email notification subject
-  - Fixed ajax_resize_image() process
-  - Fixed country fields values
-  - Fixed dynamic_profile.php notice
-  - Fixed integration with WP native admin_post and admin_post_nopriv requests
-  - Fixed profile image settings
-  - Fixed profile privacy for not logged in users, if restriction options set for profile page as visible only for logged in and showing message instead of redirect
-    (it makes the same for {site_url}/user and {site_url}/user/{user_slug} )
-  - Fixed security issue on registration form submission when username or email have conditional logic
-  - Fixed RTL styles issues on user profile and account pages
-  - Fixed upload profile/cover photos at the profile page, don't apply until the crop finished
-  - Fixed alphabetical field validation for cyrillic and not UTF-8 symbols
-  - Fixed user profile validation if username, username or email, password and email fields were added to form
-  - Fixed user profile preview in admin Form Builder
-  - Fixed getting templates function for some Windows servers
-  - Fixed plugin update process for multisites
-  - Fixed function "um_apply_conditions". An error appears with jQuery v2.1.3
-  - Localized um-raty.js library
-  - Localized strings
-
-= 2.0.56: August 21, 2019 =
-
-* Enhancements:
-  - Added security fixes (XSS)
-  - Added hooks for 3rd party integrations
-  - Updated Datepicker & Timepicker library from 5.6 to 6.2 version
-
-* Bugfixes:
-  - Fixed validation of forms conditional fields at the backend (for the nesting fields)
-  - Fixed edit profile mode when profile menu is disabled
-  - Fixed RTL styles and layouts
-  - Fixed user profile description validation
-  - Fixed JS errors on some installs
-  - Fixed ability approve users by Administrator with special capabilities
-  - Fixed multiselects' retrieval of options from callback function
-  - Fixed save process and conditional logic for Appearances -> Profile Menu settings section
-  - Fixed uninstall process
-  - Fixed is_selected method for some cases
-  - Fixed form settings fields for default button labels in wp-admin metaboxes
-  - Fixed generate metakeys for the form's custom fields
-  - Fixed issue when UM Roles localized as object on Add/Edit User screen
-  - Fixed PHP notices
-
-= 2.0.55: August 16, 2019 =
-
-* Bugfixes:
-  - Fixed profile privacy for not logged in users, if restriction options set for profile page as visible only for logged in
-
-= 2.0.54: July 22, 2019 =
-
-* Enhancements:
-  - Added security fixes (XSS)
-
-* Bugfixes:
-  - Fixed update process for not UM custom role
-  - Fixed extensions licenses validation handler
-  - Fixed profile tabs handlers
-
-= 2.0.53: July 16, 2019 =
-
-* Enhancements:
-  - Added option to disable profile avatar uploader
-  - Moved extensions icons to core
-
-* Bugfixes:
-  - Fixed Profile Tabs Privacy settings
-  - Fixed Notifications Account tab view
-  - Fixed warnings on validation process
-  - Fixed slashes in some texts from options
-  - Fixed callback functions for select and multiselect fields
-
-= 2.0.52: July 11, 2019 =
-
-* Enhancements:
-  - Extended hooks for 3rd party integrations
-
-* Bugfixes:
-  - Fixed settings labels with CPT & Taxonomies
-  - Fixed UM Roles create/edit XSS security issue
-  - Fixed XSS security issue on account upgrade
-
-= 2.0.51: July 09, 2019 =
-
-* Bugfixes:
-  - Fixed UM Roles create/edit security issue
-
-= 2.0.50: July 02, 2019 =
-
-* Enhancements:
-  - Extended hooks for 3rd party integrations
-
-* Bugfixes:
-  - Fixed PHP notices when runs validation
-  - Fixed loop issue with Profile tabs
-  - Fixed home page restrictions
-
-= 2.0.49: May 29, 2019 =
-
-* Enhancements:
-  - Extended hooks for 3rd party integrations
-
-* Bugfixes:
-  - Fixed security vulnerability with registration form
-  - Fixed the using of deprecated send password hook
-
-= 2.0.48: May 16, 2019 =
-
-* Enhancements:
-  - Added an ability to 3rd party integration with cover image actions
-
-* Bugfixes:
-  - Fixed ability to edit profile on not predefined Profile Page
-
-= 2.0.47: May 14, 2019 =
-
-* Bugfixes:
-  - Fixed save special characters values
-  - Fixed trim fields options before validation
-  - Fixed save empty value at Profile Registration form in radio/checkbox/select/multiselect fields
-  - Fixed displaying empty value of multiselect field at Profile Page
-  - Fixed cover photo dropdown menus
-
-= 2.0.46: May 10, 2019 =
-
-* Bugfixes:
-  - Fixed extensions' upgrader
-  - Security vulnerabilities on Profile/Registration submit and file/images uploading
-  - Fixed session clean on logout
-
-= 2.0.45: May 08, 2019 =
-
-* Bugfixes:
-  - Fixed issues with Gutenberg scripts and UM blocks
-  - Security vulnerabilities on Profile/Registration submit and file/images uploading
-
-= 2.0.44: May 08, 2019 =
-
-* Enhancements:
-  - Added automatically template saver when you upgrade your theme
-  - Added default value for Date and Time user profile fields
-  - Updated Scroll library
-  - Added REST API v2 class with new query vars. There is an ability to select v1 or v2 for use. For old users v1 is default, for new users v2
-
-* Bugfixes:
-  - Added nocache headers to reset password form
-  - Email templates saving to child theme, if parent theme already has email template files
-  - Email templates locate in the default plugin folder with active WPML
-  - Form builder with some predefined form fields, which had different keys/metakeys (currently use the same)
-  - Logout redirect with active WPML
-  - Fixed $_SERVER usage when WP-CLI using
-  - Extended integration for UM field value
-  - um_user function avoid loop when 'display name' and 'full name' used
-  - Restriction options for Terms and access on front-end
-  - Plugin/Theme upgrader
-  - Remove duplicate data 'user_login' from metadata
-  - Replace placeholders duplicates
-  - Password Reset link regeneration
-  - Fixed issues with scroll on mobile devices
-  - Fixed multisite activation
-
-* Deprecated:
-  - "Is Account page?" and "Is User page?" options for WPML integration ( because WPML translations works properly )
-
-= 2.0.43: March 29, 2019 =
-
-* Bugfixes:
-  - Fixed Last Login order in Member Directory
-
-= 2.0.42: March 28, 2019 =
-
-* Enhancements:
-  - Added option for enable/disable Gutenberg blocks
-
-* Bugfixes:
-  - Fixed conflicts with themes, which not support custom Gutenberg blocks via the option
-
-= 2.0.41: March 27, 2019 =
-
-* Enhancements:
-  - Added Gutenberg blocks section with Ultimate Member shortcodes
-  - Clear temp directory on upload process 1 day files old
-  - Updated custom scrollbar JS library to jQuery 3 support
-
-* Bugfixes:
-  - Fixed vulnerability with Reset Password form
-  - Fixed Edit Row settings
-  - Fixed save profile fields with 0 values
-  - Fixed upload photo base URL for Windows servers
-  - Fixed displaying user Posts at Profile/Posts tab
-  - Fixed unique filename issue, upload avatar with high case extension
-  - Fixed member directory filter title
-  - Fixed duplicate delete user handler
-  - Fixed sorting by Last Login date for users without meta
-  - Fixed hook after password reset (issue #532)
-  - Fixed member directory user role filter
-  - Fixed restriction content WC Products integration
-  - Fixed words count for French in user description field
-  - Fixed is_selected function for dropdown/multi-select/checkbox profile fields
-  - Fixed disable email field at Edit Profile form via filter (disabled by default)
-
-= 2.0.40: March 12, 2019 =
-
-* Bugfixes:
-  - Fixed security issue on user Account Update
-
-= 2.0.39: February 11, 2019 =
-
-* Enhancements:
-  - Restored option for disable users cache
-  - Transposh plugin integration
-
-* Bugfixes:
-  - Fixed delete users handlers on single/multisite installs
-  - Fixed fields labels on member directory
-  - Fixed profile form cover photo ratio value
-  - Fixed profile and registration form default field's values
-  - Fixed "is_selected" function with empty value and default value option
-  - Fixed member directory notices with disabled metadata
-  - Fixed textarea profile field formatting
-  - Fixed registration without username field
-  - Fixed flush password reset limit after successfully login
-  - Fixed upload files handlers for avoid the conflicts with other plugins
+= Important: UM2.0+ is a significant update to the code base from 1.3.88. Please make sure you take a full-site backup with restore point before updating the plugin =
 
 = 2.0.38: January 10, 2019 =
 

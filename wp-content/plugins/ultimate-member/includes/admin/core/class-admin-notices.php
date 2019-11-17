@@ -1,9 +1,8 @@
 <?php
 namespace um\admin\core;
 
-
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) exit;
-
 
 if ( ! class_exists( 'um\admin\core\Admin_Notices' ) ) {
 
@@ -35,9 +34,6 @@ if ( ! class_exists( 'um\admin\core\Admin_Notices' ) ) {
 		}
 
 
-		/**
-		 *
-		 */
 		function create_list() {
 			$this->old_extensions_notice();
 			$this->install_core_page_notice();
@@ -199,7 +195,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Notices' ) ) {
 
 			ob_start(); ?>
 
-			<div class="<?php echo esc_attr( $class ) ?> um-admin-notice notice <?php echo $dismissible ? 'is-dismissible' : '' ?>" data-key="<?php echo esc_attr( $key ) ?>">
+			<div class="<?php echo esc_attr( $class ) ?> um-admin-notice notice <?php echo $dismissible ? 'is-dismissible' : '' ?>" data-key="<?php echo $key ?>">
 				<?php echo ! empty( $notice_data['message'] ) ? $notice_data['message'] : '' ?>
 			</div>
 
@@ -280,7 +276,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Notices' ) ) {
 
 			$this->add_notice( 'old_extensions', array(
 				'class' => 'error',
-				'message' => '<p>' . sprintf( __( '<strong>%s %s</strong> requires 2.0 extensions. You have pre 2.0 extensions installed on your site. <br /> Please update %s extensions to latest versions. For more info see this <a href="%s" target="_blank">doc</a>.', 'ultimate-member' ), ultimatemember_plugin_name, ultimatemember_version, ultimatemember_plugin_name, 'https://docs.ultimatemember.com/article/201-how-to-update-your-site' ) . '</p>',
+				'message' => '<p>' . sprintf( __( '<strong>%s %s</strong> requires 2.0 extensions. You have pre 2.0 extensions installed on your site. <br /> Please update %s extensions to latest versions. For more info see this <a href="%s" target="_blank">doc</a>.', 'ultimate-member' ), ultimatemember_plugin_name, ultimatemember_version, ultimatemember_plugin_name, 'http://docs.ultimatemember.com/article/266-updating-to-2-0-versions-of-extensions' ) . '</p>',
 			), 0 );
 		}
 
@@ -305,7 +301,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Notices' ) ) {
 						</p>
 
 						<p>
-							<a href="<?php echo esc_url( add_query_arg( 'um_adm_action', 'install_core_pages' ) ); ?>" class="button button-primary"><?php _e( 'Create Pages', 'ultimate-member' ) ?></a>
+							<a href="<?php echo esc_attr( add_query_arg( 'um_adm_action', 'install_core_pages' ) ); ?>" class="button button-primary"><?php _e( 'Create Pages', 'ultimate-member' ) ?></a>
 							&nbsp;
 							<a href="javascript:void(0);" class="button-secondary um_secondary_dimiss"><?php _e( 'No thanks', 'ultimate-member' ) ?></a>
 						</p>
@@ -388,10 +384,10 @@ if ( ! class_exists( 'um\admin\core\Admin_Notices' ) ) {
 						}
 					}
 
-					$ignore = admin_url( 'users.php' );
+					$ignore = admin_url('users.php');
 
 					$messages[0]['err_content'] = sprintf( __( 'Are you sure you want to delete the selected user(s)? The following users will be deleted: <p>%s</p> <strong>This cannot be undone!</strong>','ultimate-member'), $users);
-					$messages[0]['err_content'] .= '<p><a href="'. esc_url( $confirm_uri ) .'" class="button-primary">' . __( 'Remove', 'ultimate-member' ) . '</a>&nbsp;&nbsp;<a href="' . esc_url( $ignore ) . '" class="button">' . __('Undo','ultimate-member') . '</a></p>';
+					$messages[0]['err_content'] .= '<p><a href="'. esc_html( $confirm_uri ) .'" class="button-primary">' . __( 'Remove', 'ultimate-member' ) . '</a>&nbsp;&nbsp;<a href="'.$ignore.'" class="button">' . __('Undo','ultimate-member') . '</a></p>';
 
 					break;
 
@@ -408,7 +404,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Notices' ) ) {
 					break;
 
 				case 'got_updates':
-					$messages[0]['content'] = __( 'You have the latest updates.', 'ultimate-member' );
+					$messages[0]['content'] = __( 'You got the latest upgrades.', 'ultimate-member' );
 					break;
 
 				case 'often_updates':
@@ -538,7 +534,7 @@ if ( ! class_exists( 'um\admin\core\Admin_Notices' ) ) {
 			if ( ! empty(  $arr_inactive_license_keys ) ) {
 				$this->add_notice( 'license_key', array(
 					'class'     => 'error',
-					'message'   => '<p>' . sprintf( __( 'There are %d inactive %s license keys for this site. This site is not authorized to get plugin updates. You can active this site on <a href="%s">www.ultimatemember.com</a>.', 'ultimate-member' ), count( $arr_inactive_license_keys ) , ultimatemember_plugin_name, UM()->store_url ) . '</p>',
+					'message'   => '<p>' . sprintf( __( 'There are %d inactive %s license keys for this site. This site is not authorized to get plugin updates. You can active this site on <a href="%s">www.ultimatemember.com</a>.', 'ultimate-member' ), count( $arr_inactive_license_keys ) , ultimatemember_plugin_name, 'https://ultimatemember.com' ) . '</p>',
 				), 3 );
 			}
 

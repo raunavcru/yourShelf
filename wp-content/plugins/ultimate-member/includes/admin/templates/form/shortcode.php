@@ -1,6 +1,3 @@
-<?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
-
-
 <div class="um-admin-metabox">
 	<?php /*UM()->admin_forms( array(
 		'class'		=> 'um-form-shortcode um-top-label',
